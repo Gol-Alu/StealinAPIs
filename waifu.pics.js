@@ -7,7 +7,6 @@ const reactions = [
     "cuddle",
     "cry",
     "hug",
-    "awoo",
     "kiss",
     "lick",
     "pat",
@@ -32,6 +31,8 @@ const reactions = [
     "cringe"
 ];
 
+let exists = [];
+
 async function downloadGif(reaction) {
     const apiUrl = `https://api.waifu.pics/many/sfw/${reaction}`;
     try {
@@ -41,6 +42,11 @@ async function downloadGif(reaction) {
         const folderPath = path.join(__dirname, 'waifu.pics', reaction);
 
         gifUrl.forEach(async f => {
+
+            if(exists.includes(f)) {
+                return console.log(`[${reaction}] File ${f} already exists. Skipping...`); // to reduce existsSyncs
+            }
+
             const gifName = f.split('/').pop(); // Extracting the name from the URL
             const filePath = path.join(folderPath, gifName);
 
@@ -59,6 +65,7 @@ async function downloadGif(reaction) {
                 console.log(`[${reaction}] Downloaded ${filePath}`);
             } else {
                 console.log(`[${reaction}] File ${f} already exists. Skipping...`);
+                exists.push(f)
             }
             await new Promise(resolve => setTimeout(resolve, 100));
         })
